@@ -17,21 +17,28 @@ fn main() {
                 let range = policy[0];
 
                 let firstlast = range.split("-").collect::<Vec<&str>>();
-                println!("{:?}",firstlast);
-                let min = firstlast[0].parse::<i32>().unwrap();
-                let max = firstlast[1].parse::<i32>().unwrap();
+                let min = firstlast[0].parse::<usize>().unwrap();
+                let max = firstlast[1].parse::<usize>().unwrap();
 
-                let mut numchars = 0;
+                if min >= max {
 
-                for c in split[1].chars() {
-                    if c == letter {
-                        numchars+=1;
-                    }
-
+                    panic!("hewwow");
                 }
 
-                if numchars >= min && numchars <= max {
-                    meetspolicy +=1;
+                let mut m = 0;    
+                
+                let chars = split[1].as_bytes();
+                if chars[min] as char == letter {
+                    println!("{} {} {:?}", chars[min-1] as char, letter,chars);
+                    m+=1;
+                }
+
+                if chars[max] as char == letter {
+                    m+=1;
+                }
+
+                if m  == 1 {
+                    meetspolicy += 1;
                 }
             }
         }
