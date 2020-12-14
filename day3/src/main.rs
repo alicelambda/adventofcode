@@ -22,18 +22,30 @@ fn main() {
     }
 
     println!("{}",trees[0].len());
-    let mut x = 0;
-    let mut y = 0;
-    let mut ntrees = 0;
+    let yslopes = vec![1,1,1,1,2];
+    let xslopes = vec![1,3,5,7,1];
+    let mut slopindex = 0;
+    let mut twees = Vec::new();
+    println!("{}", trees.len());
     loop {
-        x = (x +  3) % trees[0].len();
-        y += 1;
+        let mut x = 0;
+        let mut y = 0;
+        let mut ntrees = 0;
+        loop {
+            x = (x +  xslopes[slopindex]) % trees[0].len();
+            y = (y + yslopes[slopindex]);
 
-        if trees[y][x] {
-            ntrees += 1;
+            if y >= trees.len()  {
+                twees.push(ntrees);
+                break;
+            }
+            if trees[y][x] {
+                ntrees += 1;
+            }
+            println!("{} {} {}",x,y,ntrees);
         }
-
-        println!("{} {} {}",x,y,ntrees);
+        slopindex+=1;
+        println!("{:?}",twees);
     }
 }
 
