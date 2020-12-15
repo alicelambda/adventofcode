@@ -25,6 +25,10 @@ fn main() {
     //inefficent
     for i in nums.iter() {
         for j in nums.iter() {
+            if i >= j {
+                continue
+            }
+
             for k in nums.iter() {
                 if i + j +k == 2020 {
                     println!("{} {} {}     {}",i,j,k, i*j*k);
