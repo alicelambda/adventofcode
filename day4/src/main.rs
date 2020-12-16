@@ -13,7 +13,6 @@ fn main() {
                     let parts = field.split(":").collect::<Vec<&str>>();
                     if parts.len() == 2 {
                         validate_field(parts[0],parts[1]);
-                        print!("{:?}",parts);
                     }
                 }
             
@@ -39,13 +38,32 @@ fn validate_field(tag: &str, body: &str) -> bool {
             let expire = body.parse::<i32>().unwrap();
             expire >= 2020 && expire <= 2030
         },
-            println!("expiration year"),
-        "hgt" => println!("height"),
-        "hcl" => println!("hair color"),
-        "ecl" => println!("eye color"),
-        "pid" => println!("passport id"),
-        "cid" => println!("country id"),
-        _ => (),
+        "hgt" => {
+            let len = body.len();
+            let unit =  &body[len-2..len];
+            match unit {
+                "in" => {
+                    let num = &body[0..len-2].parse::<i32>().unwrap();
+                    num >= &59 && num <= &76
+                },
+                "cm" => {
+                    let num = &body[0..len-2].parse::<i32>().unwrap();
+                    num >= &150 && num <= &193
+                }
+                _ => false
+            }
+        },
+        "hcl" => {
+            let c = &body[0..1];
+            if c != "#" {
+                false
+            }
+
+        },
+        "ecl" => true,
+        "pid" => true,
+        "cid" => true,
+        _ => true,
     }
 }
 
