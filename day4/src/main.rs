@@ -12,8 +12,14 @@ fn main() {
                 for field in  fields.split(" ") {
                     let parts = field.split(":").collect::<Vec<&str>>();
                     if parts.len() == 2 {
-                        validate_field(parts[0],parts[1]);
+                        println!("valid {:?}",parts);
+                        if(validate_field(parts[0],parts[1])) {
+                            nofields += 1;
+                        }
+                    } else {
+                        println!("invalid {:?}",parts);
                     }
+
                 }
             
             }
@@ -96,8 +102,10 @@ fn validate_field(tag: &str, body: &str) -> bool {
             }
             true
         },
-        "cid" => true,
-        _ => true,
+        "cid" => { 
+            true
+        },
+        _ => false,
     }
 }
 
