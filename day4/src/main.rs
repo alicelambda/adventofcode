@@ -6,7 +6,8 @@ fn main() {
     let mut valid_passports = 0;
     let mut nofields = 0;
 
-    if let Ok(lines) = read_lines("./invalid4") {
+    
+    if let Ok(lines) = read_lines("./input") {
         for line in lines {
             if let Ok(fields)  = line {
                 for field in  fields.split(" ") {
@@ -16,7 +17,7 @@ fn main() {
                             nofields += 1;
                         }
                     } else {
-                        if nofields == 6 {
+                        if nofields == 7 {
                             valid_passports += 1;
                             println!("valid passport {}",nofields);
                         } else {
@@ -31,6 +32,7 @@ fn main() {
 
         }
     }
+
 
     println!("{}", valid_passports);
 }
@@ -65,7 +67,7 @@ fn validate_field(tag: &str, body: &str) -> bool {
             }
         },
         "hcl" => {
-            if body.len() != 6 {
+            if body.len() != 7 {
                 return false
             }
             let c = &body[0..1];
