@@ -4,20 +4,25 @@ use std::path::Path;
 
 fn main() {
     let mut valid_passports = 0;
+    let mut nofields = 0;
 
-    if let Ok(lines) = read_lines("./input") {
-        let mut nofields = 0;
+    if let Ok(lines) = read_lines("./invalid4") {
         for line in lines {
             if let Ok(fields)  = line {
                 for field in  fields.split(" ") {
                     let parts = field.split(":").collect::<Vec<&str>>();
                     if parts.len() == 2 {
-                        println!("valid {:?}",parts);
-                        if(validate_field(parts[0],parts[1])) {
+                        if validate_field(parts[0],parts[1])  {
                             nofields += 1;
                         }
                     } else {
-                        println!("invalid {:?}",parts);
+                        if nofields == 6 {
+                            valid_passports += 1;
+                            println!("valid passport {}",nofields);
+                        } else {
+                            println!("invalid passport {}",nofields);
+                        }
+                        nofields = 0;
                     }
 
                 }
@@ -103,7 +108,7 @@ fn validate_field(tag: &str, body: &str) -> bool {
             true
         },
         "cid" => { 
-            true
+            false
         },
         _ => false,
     }
@@ -113,4 +118,36 @@ fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where P: AsRef<Path>, {
     let file = File::open(filename)?;
     Ok(io::BufReader::new(file).lines())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        assert_eq!(validate_field("byr","2002"), true);
+        assert_eq!(validate_field("byr","2003"), false);
+    }
+
+    #[test]
+    fn test_height() {
+        assert_eq!(validate_field("hgt","60in"), true);
+        assert_eq!(validate_field("hgt","190cm"), true);
+        assert_eq!(validate_field("hgt","190in"), false);
+        assert_eq!(validate_field("hgt","190"), false);
+    }
+
+    #[test]
+    fn test_eye() {
+        assert_eq!(validate_field("ecl","brn"), true);
+        assert_eq!(validate_field("ecl","wat"), false);
+    }
+
+    #[test]
+    fn test_hair() {
+        assert_eq!(validate_field("hcl","dab227"), false);
+        assert_eq!(validate_field("hcl","#602927"), true);
+        assert_eq!(validate_field("hcl","74454a"), false);
+    }
 }
