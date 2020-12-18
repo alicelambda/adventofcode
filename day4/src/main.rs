@@ -54,14 +54,48 @@ fn validate_field(tag: &str, body: &str) -> bool {
             }
         },
         "hcl" => {
+            if body.len() != 6 {
+                return false
+            }
             let c = &body[0..1];
             if c != "#" {
-                false
+                return false
             }
+            for c in body[1..7].chars() {
+                match c {
+                    'a'..='f' | '0'..='9' => {
+                    }
+                    _ => return false
+                }
+            
+            }
+            true
 
         },
-        "ecl" => true,
-        "pid" => true,
+        "ecl" => {
+            match body {
+                "amb" => true,
+                "blu" => true,
+                "brn" => true,
+                "gry" => true,
+                "grn" => true,
+                "hzl" => true,
+                "oth" => true,
+                _ => false
+            }
+        },
+        "pid" => {
+            if body.len() != 9 {
+                return false
+            }
+            for c in body.chars() {
+                if let '0'..='9' = c {
+                } else {
+                    return false
+                }
+            }
+            true
+        },
         "cid" => true,
         _ => true,
     }
