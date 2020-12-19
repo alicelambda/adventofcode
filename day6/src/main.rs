@@ -8,16 +8,24 @@ use std::path::Path;
 fn main() {
     let mut answers = HashMap::new();
     let mut noanswers = 0;
+    let mut nopeople = 0;
     if let Ok(lines) = read_lines("./input") {
         for line in lines {
             if let Ok(answer) = line {
                 let length = answer.len();
                 if length != 0 {
                     for c in answer.chars() {
-                        answers.insert(c,1);
+                        let count = answers.entry(c).or_insert(0);
+                        *count += 1;
                     }
+                    nopeople += 1;
                 } else {
-                    noanswers += answers.len();
+                    for (_, n) in &answers {
+                        if *n == nopeople {
+                            noanswers += 1;
+                        }
+                    }
+                    nopeople = 0;
                     answers = HashMap::new();
                 }
             }
