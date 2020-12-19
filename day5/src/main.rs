@@ -3,15 +3,22 @@ use std::io::{self,BufRead};
 use std::path::Path;
 
 fn main() {
+    let mut max = 0;
     if let Ok(lines) = read_lines("./input") {
         for line in lines {
             if let Ok(seat) = line {
-                for c in seat.chars() {
+                let rowstr = &seat[0..=6];
+                let colstr = &seat[6..=9];
+                let row = seat_row(&seat[0..=6]);
+                let col = seat_col(&seat[7..=9]);
+                let id = calc_seat_id(row,col);
+                if id > max {
+                    max = id;
                 }
-                println!("{}",seat);
             }
         }
     }
+    println!("max: {}",max);
 }
 
 
