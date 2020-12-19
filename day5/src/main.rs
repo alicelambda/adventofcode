@@ -3,6 +3,7 @@ use std::io::{self,BufRead};
 use std::path::Path;
 
 fn main() {
+    let mut ids = Vec::new();
     let mut max = 0;
     if let Ok(lines) = read_lines("./input") {
         for line in lines {
@@ -12,13 +13,17 @@ fn main() {
                 let row = seat_row(&seat[0..=6]);
                 let col = seat_col(&seat[7..=9]);
                 let id = calc_seat_id(row,col);
-                if id > max {
-                    max = id;
-                }
+                ids.push(id);
             }
         }
     }
-    println!("max: {}",max);
+    ids.sort();
+    for (i,n) in ids.iter().enumerate() {
+        if ids[i] != 89 + i as i32{
+            println!("{}",89+i);
+        }
+    }
+    println!("{:?}",ids);
 }
 
 
