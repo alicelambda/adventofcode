@@ -6,10 +6,11 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 struct Bag {
-    can: Vec<String>,
+    can: Vec<Contains>,
     name: String
 }
 
+#[derive(Debug)]
 struct Contains {
     name: String,
     num: i32,
@@ -22,32 +23,44 @@ fn main() {
         for line in lines {
             if let Ok(rule) = line {
                 let bag = parse_rule(&rule);
-                println!("{:?}",bag);
                 let insname = bag.name.clone();
                 bags.insert(insname,bag);
             }
         }
     }
+    println!("{:?}",bags);
 }
 
 fn parse_rule (rule: &str) -> Bag {
     let parts = rule.split("contain").collect::<Vec<&str>>();
     let part2 = parts[1].split(",").collect::<Vec<&str>>();
-    let mut contains : Vec<String> = Vec::new();
+    let mut contains : Vec<Contains> = Vec::new();
     if part2.len() == 2 {
-        contains.push(part2[0].to_string());
+        match  parse_bag_num(&part2[0].to_string()) {
+            Some(rule) => contains.push(rule),
+            None => {}
+        }
+        
         let mut s1 = part2[1].to_string();
         s1.pop();
-        contains.push(s1);
+        match parse_bag_num(&s1) {
+            Some(rule) => contains.push(rule),
+            None => {}
+        }
     } else {
         let mut s1 = part2[0].to_string();
         s1.pop();
-        parse_bag_num(&s1);
-        contains.push(s1);
+        match parse_bag_num(&s1) {
+            Some(rule) => contains.push(rule),
+            None => {}
+        }
+
     }
+    let mut name = parts[0].to_string();
+    name.pop();
     Bag {
         can: contains,
-        name: parts[0].to_string()
+        name: name
     }
 }
 
@@ -58,7 +71,6 @@ fn parse_bag_num ( bag: &str) -> Option<Contains> {
         return None
     }
     let (a,b) = bagparse.split_once(" ").unwrap();
-    println!("{}", a);
     let nobags = a.parse::<i32>().unwrap();
     Some(
         Contains {
