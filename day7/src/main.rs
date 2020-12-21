@@ -1,3 +1,4 @@
+#![feature(str_split_once)]
 use std::fs::File;
 use std::io::{self,BufRead};
 use std::path::Path;
@@ -41,6 +42,7 @@ fn parse_rule (rule: &str) -> Bag {
     } else {
         let mut s1 = part2[0].to_string();
         s1.pop();
+        parse_bag_num(&s1);
         contains.push(s1);
     }
     Bag {
@@ -49,10 +51,21 @@ fn parse_rule (rule: &str) -> Bag {
     }
 }
 
-fn parse_bag_num (mut bag: &str) {
-    bag.remove(0);
-    bag.split_once(" ");
+fn parse_bag_num ( bag: &str) -> Option<Contains> {
+    let mut bagparse = bag.to_string();
+    bagparse.remove(0);
+    if bagparse == "no other bags" {
+        return None
+    }
+    let (a,b) = bagparse.split_once(" ").unwrap();
+    println!("{}", a);
+    let nobags = a.parse::<i32>().unwrap();
+    Some(
+        Contains {
+            name:b.to_string(),
+            num:nobags,
 
+        })
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
