@@ -19,7 +19,7 @@ struct Contains {
 
 fn main() {
     let mut bags:HashMap<String,Bag> = HashMap::new();
-    if let Ok(lines) = read_lines("./test") {
+    if let Ok(lines) = read_lines("./input") {
         for line in lines {
             if let Ok(rule) = line {
                 let bag = parse_rule(&rule);
@@ -28,30 +28,28 @@ fn main() {
             }
         }
     }
-    for (key,val) in &bags {
-        println!("bags: {} {:?}",key,val);
-    }
     println!("{}",traverse(&bags));
 }
 
 fn traverse (bags: &HashMap<String,Bag>) -> i64{
     let mut cancontain = 0;
     for (bag, _) in bags {
-        if bag != "shiny gold" {
-            cancontain += traverse_help(bag, bags);
+        if bag != "shiny gold bag" {
+            cancontain += traverse_help(bag,bags);
         }
     }
     cancontain
 }
 
-fn traverse_help(curbag: &str, bags: &HashMap<String,Bag>) -> i64{
-    println!("{:?}",curbag);
-    let  con= bags.get(curbag).unwrap();
+fn traverse_help(curbag: &str, bags: &HashMap<String,Bag>) -> i64 {
+    let con = bags.get(curbag).unwrap();
     for i in &con.can {
-        if i.name == "shiny gold" {
+        if i.name == "shiny gold bag" {
             return 1
         } else {
-            traverse_help(&i.name, bags);
+            if traverse_help(&i.name, bags) == 1 {
+                return 1
+            }
         }
     }
     0
@@ -66,8 +64,9 @@ fn parse_rule (rule: &str) -> Bag {
     name.pop();
     if part2.len() == 2 {
         let mut s1 = part2[0].to_string();
-        s1.pop();
-        println!("1 {}",s1);
+        if s1.contains("bags") {
+            s1.pop();
+        }
         match  parse_bag_num(&s1) {
             Some(rule) => contains.push(rule),
             None => {}
@@ -75,10 +74,6 @@ fn parse_rule (rule: &str) -> Bag {
         
         let mut s1 = part2[1].to_string();
         s1.pop();
-        println!("2 {}", s1);
-        println!("1 {}",name);
-        println!("1 {}",name);
-        println!("1 {}",name);
         s1.pop();
         match parse_bag_num(&s1) {
             Some(rule) => contains.push(rule),
@@ -87,7 +82,6 @@ fn parse_rule (rule: &str) -> Bag {
     } else {
         let mut s1 = part2[0].to_string();
         s1.pop();
-        println!("3 {}", s1);
         match parse_bag_num(&s1) {
             Some(rule) => contains.push(rule),
             None => {}
