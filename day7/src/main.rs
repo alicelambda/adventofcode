@@ -13,7 +13,7 @@ struct Bag {
 #[derive(Debug)]
 struct Contains {
     name: String,
-    num: i32,
+    num: i64,
 }
 
 
@@ -28,7 +28,17 @@ fn main() {
             }
         }
     }
-    println!("{}",traverse(&bags));
+    println!("{}",calc_val_bag("shiny gold bag",&bags));
+}
+
+fn calc_val_bag(curbag: &str, bags: &HashMap<String,Bag>) -> i64 {
+    let con = bags.get(curbag).unwrap();
+    let mut contains = 0;
+    for i in &con.can {
+        contains += i.num;
+        contains += i.num * calc_val_bag(&i.name,bags);
+    }
+    contains
 }
 
 fn traverse (bags: &HashMap<String,Bag>) -> i64{
@@ -81,7 +91,6 @@ fn parse_rule (rule: &str) -> Bag {
     let mut name = bagcontain[0].to_string();
     name.pop();
     name.pop();
-    println!("name {}",name);
     Bag {
         can: children,
         name: name,
@@ -95,7 +104,7 @@ fn parse_contains( bag: &str) -> Option<Contains> {
         return None
     }
     let (num,bag) = bagparse.split_once(" ").unwrap();
-    let nobags = num.parse::<i32>().unwrap();
+    let nobags = num.parse::<i64>().unwrap();
     let mut name = bag.to_string();
     if nobags > 1 {
         name.pop();
