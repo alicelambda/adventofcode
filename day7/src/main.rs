@@ -28,6 +28,9 @@ fn main() {
             }
         }
     }
+    for (key,val) in &bags {
+        println!("{:?} {:?}",key,val);
+    }
     println!("{}",traverse(&bags));
 }
 
@@ -42,6 +45,7 @@ fn traverse (bags: &HashMap<String,Bag>) -> i64{
 }
 
 fn traverse_help(curbag: &str, bags: &HashMap<String,Bag>) -> i64 {
+    println!("{}", curbag);
     let con = bags.get(curbag).unwrap();
     for i in &con.can {
         if i.name == "shiny gold bag" {
@@ -56,41 +60,24 @@ fn traverse_help(curbag: &str, bags: &HashMap<String,Bag>) -> i64 {
 }
 
 fn parse_rule (rule: &str) -> Bag {
-    let parts = rule.split("contain").collect::<Vec<&str>>();
-    let part2 = parts[1].split(",").collect::<Vec<&str>>();
-    let mut contains : Vec<Contains> = Vec::new();
-    let mut name = parts[0].to_string();
-    name.pop();
-    name.pop();
-    if part2.len() == 2 {
-        let mut s1 = part2[0].to_string();
-        if s1.contains("bags") {
-            s1.pop();
-        }
-        match  parse_bag_num(&s1) {
-            Some(rule) => contains.push(rule),
-            None => {}
-        }
+    let bagcontain= rule.split("contain").collect::<Vec<&str>>();
+    let part2 = bagcontain[1].split(",").collect::<Vec<&str>>();
+    println!("{:?}",part2);
+    let mut chunks = part2.chunks(1).peekable();
+    while let Some(rule) = chunks.next() {
+        if chunks.peek().is_some() {
+            println!("{}",rule[0]);
+        } else {
+            let mut bag = rule[0].to_string();
+            bag.pop();
+            println!("n {}",bag);
         
-        let mut s1 = part2[1].to_string();
-        s1.pop();
-        s1.pop();
-        match parse_bag_num(&s1) {
-            Some(rule) => contains.push(rule),
-            None => {}
         }
-    } else {
-        let mut s1 = part2[0].to_string();
-        s1.pop();
-        match parse_bag_num(&s1) {
-            Some(rule) => contains.push(rule),
-            None => {}
-        }
-
     }
+    println!("================");
     Bag {
-        can: contains,
-        name: name
+        can: vec![],
+        name: "hi".to_string()
     }
 }
 
