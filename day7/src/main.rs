@@ -28,9 +28,6 @@ fn main() {
             }
         }
     }
-    for (key,val) in &bags {
-        println!("{:?} {:?}",key,val);
-    }
     println!("{}",traverse(&bags));
 }
 
@@ -45,7 +42,6 @@ fn traverse (bags: &HashMap<String,Bag>) -> i64{
 }
 
 fn traverse_help(curbag: &str, bags: &HashMap<String,Bag>) -> i64 {
-    println!("{}", curbag);
     let con = bags.get(curbag).unwrap();
     for i in &con.can {
         if i.name == "shiny gold bag" {
@@ -62,36 +58,50 @@ fn traverse_help(curbag: &str, bags: &HashMap<String,Bag>) -> i64 {
 fn parse_rule (rule: &str) -> Bag {
     let bagcontain= rule.split("contain").collect::<Vec<&str>>();
     let part2 = bagcontain[1].split(",").collect::<Vec<&str>>();
-    println!("{:?}",part2);
     let mut chunks = part2.chunks(1).peekable();
+    let mut children = Vec::new();
     while let Some(rule) = chunks.next() {
         if chunks.peek().is_some() {
-            println!("{}",rule[0]);
+            let contains = parse_contains(&rule[0].to_string());
+            match contains {
+                Some(rule) => children.push(rule),
+                None => ()
+            }
         } else {
             let mut bag = rule[0].to_string();
             bag.pop();
-            println!("n {}",bag);
+            let contains = parse_contains(&bag);
+            match contains {
+                Some(rule) => children.push(rule),
+                None => ()
+            }
         
         }
     }
-    println!("================");
+    let mut name = bagcontain[0].to_string();
+    name.pop();
+    println!("name {}",name);
     Bag {
-        can: vec![],
-        name: "hi".to_string()
+        can: children,
+        name: name,
     }
 }
 
-fn parse_bag_num ( bag: &str) -> Option<Contains> {
+fn parse_contains( bag: &str) -> Option<Contains> {
     let mut bagparse = bag.to_string();
     bagparse.remove(0);
     if bagparse == "no other bags" {
         return None
     }
-    let (a,b) = bagparse.split_once(" ").unwrap();
-    let nobags = a.parse::<i32>().unwrap();
+    let (num,bag) = bagparse.split_once(" ").unwrap();
+    let nobags = num.parse::<i32>().unwrap();
+    let mut name = bag.to_string();
+    if nobags > 1 {
+        name.pop();
+    }
     Some(
         Contains {
-            name:b.to_string(),
+            name:name,
             num:nobags,
 
         })
