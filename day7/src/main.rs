@@ -80,6 +80,7 @@ fn parse_rule (rule: &str) -> Bag {
     }
     let mut name = bagcontain[0].to_string();
     name.pop();
+    name.pop();
     println!("name {}",name);
     Bag {
         can: children,
