@@ -2,8 +2,9 @@ use std::fs::File;
 use std::io::{self,BufRead};
 use std::path::Path;
 
+#[derive(Debug)]
 struct Vm {
-    ip: i64,
+    ip: usize,
     acc: i64,
     instructions: Vec<InsName>
 }
@@ -14,6 +15,7 @@ enum InsName {
     Acc(i64),
     Jmp(i64)
 }
+
 fn main() {
     let mut ins = Vec::new();
     if let Ok(lines) = read_lines("./test") {
@@ -24,12 +26,33 @@ fn main() {
             }
         }
     }
-    let machine = Vm {
+    let mut machine = Vm {
         ip: 0,
         acc: 0,
         instructions: ins,
     };
+    println!("{:?}",machine);
+    loop {
+        step(&mut machine);
+        println!("{:?}",machine);
+    }
 }
+
+fn step(vm : &mut Vm) {
+    let cur = &vm.instructions[vm.ip];
+    match cur {
+        InsName::Nop => {
+            vm.ip = vm.ip + 1;
+        },
+        InsName::Jmp(x) => {
+            vm.ip = vm.ip + *x as usize;
+        },
+        InsName::Acc(x) => { 
+            vm.acc = vm.acc + x;
+        },
+    }
+}
+
 
 fn parse_ins(string :&str) -> InsName {
     let splits = string.split(" ").collect::<Vec<&str>>();
