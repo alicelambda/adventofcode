@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 struct Vm {
-    ip: usize,
+    ip: i64,
     acc: i64,
     instructions: Vec<InsName>,
 
@@ -20,7 +20,7 @@ enum InsName {
 
 fn main() {
     let mut ins = Vec::new();
-    if let Ok(lines) = read_lines("./test") {
+    if let Ok(lines) = read_lines("./input") {
         for line in lines {
             if let Ok(instruction) = line {
                 let splits = instruction.split(" ").collect::<Vec<&str>>();
@@ -33,31 +33,33 @@ fn main() {
         acc: 0,
         instructions: ins,
     };
-    println!("{:?}",machine);
     let mut used = HashMap::new();
     loop {
-        if used.contains(machine.ip) {
+        if let Some(i) = used.get(&machine.ip) {
+            println!("broke {} {}",machine.ip,i);
             break
         } else {
-            used.insert(machine.ip,1)
+            println!("added {}",machine.ip);
+            used.insert(machine.ip,1);
         }
-
-        step(&mut machine);
         println!("{:?}",machine);
+        step(&mut machine);
     }
+    println!("{}",&machine.acc);
 }
 
 fn step(vm : &mut Vm) {
-    let cur = &vm.instructions[vm.ip];
+    let cur = &vm.instructions[vm.ip as usize];
     match cur {
         InsName::Nop => {
             vm.ip = vm.ip + 1;
         },
         InsName::Jmp(x) => {
-            vm.ip = vm.ip + *x as usize;
+            vm.ip = vm.ip + x;
         },
         InsName::Acc(x) => { 
             vm.acc = vm.acc + x;
+            vm.ip = vm.ip + 1;
         },
     }
 }
