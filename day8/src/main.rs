@@ -1,12 +1,14 @@
 use std::fs::File;
 use std::io::{self,BufRead};
 use std::path::Path;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 struct Vm {
     ip: usize,
     acc: i64,
-    instructions: Vec<InsName>
+    instructions: Vec<InsName>,
+
 }
 
 #[derive(Debug)]
@@ -32,7 +34,14 @@ fn main() {
         instructions: ins,
     };
     println!("{:?}",machine);
+    let mut used = HashMap::new();
     loop {
+        if used.contains(machine.ip) {
+            break
+        } else {
+            used.insert(machine.ip,1)
+        }
+
         step(&mut machine);
         println!("{:?}",machine);
     }
