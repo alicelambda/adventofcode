@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::{self,BufRead};
 use std::path::Path;
 use std::collections::HashMap;
+use std::convert::TryInto;
 
 #[derive(Debug)]
 struct Vm {
@@ -11,7 +12,7 @@ struct Vm {
 
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum InsName {
     Nop,
     Acc(i64),
@@ -31,38 +32,26 @@ fn main() {
     let mut machine = Vm {
         ip: 0,
         acc: 0,
-        instructions: ins,
+        instructions: ins.clone(),
     };
-    let mut used = HashMap::new();
-    loop {
-        if let Some(i) = used.get(&machine.ip) {
-            println!("broke {} {}",machine.ip,i);
-            break
-        } else {
-            println!("added {}",machine.ip);
-            used.insert(machine.ip,1);
-        }
-        println!("{:?}",machine);
-        step(&mut machine);
-    }
-    println!("{}",&machine.acc);
+    println!("{}",does_halt(machine));
 }
 
 fn does_halt(mut machine: Vm) -> bool{
     let mut used = HashMap::new();
     loop {
         if let Some(i) = used.get(&machine.ip) {
-            println!("broke {} {}",machine.ip,i);
             return true
         } else {
             used.insert(machine.ip,1);
         }
-        step(&mut machine);
+        if step(&mut machine) {
+            return false
+        }
     }
-    false
 }
 
-fn step(vm : &mut Vm) {
+fn step(vm : &mut Vm) -> bool {
     let cur = &vm.instructions[vm.ip as usize];
     match cur {
         InsName::Nop => {
@@ -76,6 +65,10 @@ fn step(vm : &mut Vm) {
             vm.ip = vm.ip + 1;
         },
     }
+    if vm.ip > vm.instructions.len().try_into().unwrap() {
+        return true
+    }
+    false
 }
 
 
