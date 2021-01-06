@@ -48,6 +48,20 @@ fn main() {
     println!("{}",&machine.acc);
 }
 
+fn does_halt(mut machine: Vm) -> bool{
+    let mut used = HashMap::new();
+    loop {
+        if let Some(i) = used.get(&machine.ip) {
+            println!("broke {} {}",machine.ip,i);
+            return true
+        } else {
+            used.insert(machine.ip,1);
+        }
+        step(&mut machine);
+    }
+    false
+}
+
 fn step(vm : &mut Vm) {
     let cur = &vm.instructions[vm.ip as usize];
     match cur {
