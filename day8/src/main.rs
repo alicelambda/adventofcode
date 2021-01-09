@@ -14,7 +14,7 @@ struct Vm {
 
 #[derive(Debug, Clone)]
 enum InsName {
-    Nop,
+    Nop(i64),
     Acc(i64),
     Jmp(i64)
 }
@@ -30,7 +30,7 @@ fn main() {
         }
     }
     let mut ind = 0;
-    let swapped = false;
+    let mut swapped = false;
     loop {
         loop {
             if let InsName::Acc(a) = ins[ind] {
@@ -46,6 +46,17 @@ fn main() {
         };
         if does_halt(machine) {
             println!("{}",ind);
+            break
+        }
+        if !swapped {
+            if let InsName::Jmp(a) = ins[ind] {
+                ins[ind] = InsName::Nop(a);
+            } 
+            if let InsName::Nop(a) = ins[ind] {
+                ins[ind] = InsName::Jmp(a);
+            }
+            swapped = true;
+            ind += 1;
         }
 
     }
@@ -68,7 +79,7 @@ fn does_halt(mut machine: Vm) -> bool{
 fn step(vm : &mut Vm) -> bool {
     let cur = &vm.instructions[vm.ip as usize];
     match cur {
-        InsName::Nop => {
+        InsName::Nop(x) => {
             vm.ip = vm.ip + 1;
         },
         InsName::Jmp(x) => {
@@ -89,7 +100,10 @@ fn step(vm : &mut Vm) -> bool {
 fn parse_ins(string :&str) -> InsName {
     let splits = string.split(" ").collect::<Vec<&str>>();
     match splits[0] {
-        "nop" => InsName::Nop,
+        "nop" => {
+            let num = parse_num(splits[1]);
+            InsName::Nop(num)
+        },
         "acc" => {
             let num = parse_num(splits[1]);
             InsName::Acc(num)
