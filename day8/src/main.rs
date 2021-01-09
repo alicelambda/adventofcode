@@ -30,19 +30,23 @@ fn main() {
         }
     }
     let mut ind = 0;
+    let swapped = false;
     loop {
+        loop {
+            if let InsName::Acc(a) = ins[ind] {
+                ind+=1;
+            } else {
+                break
+            }
+        }
         let mut machine = Vm {
             ip: 0,
             acc: 0,
             instructions: ins.clone(),
         };
-        while machine.ins[ip] != JMP or NOP {
-            ind++;
-        }
         if does_halt(machine) {
             println!("{}",ind);
         }
-        swap(ind);
 
     }
 }
