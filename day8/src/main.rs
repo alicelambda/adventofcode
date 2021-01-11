@@ -21,7 +21,7 @@ enum InsName {
 
 fn main() {
     let mut ins = Vec::new();
-    if let Ok(lines) = read_lines("./input") {
+    if let Ok(lines) = read_lines("./test") {
         for line in lines {
             if let Ok(instruction) = line {
                 let splits = instruction.split(" ").collect::<Vec<&str>>();
@@ -44,8 +44,8 @@ fn main() {
             acc: 0,
             instructions: ins.clone(),
         };
-        if does_halt(machine) {
-            println!("{}",ind);
+        if does_halt(&machine) {
+            println!("{}",&machine.acc);
             break
         }
         if !swapped {
@@ -58,11 +58,10 @@ fn main() {
             swapped = true;
             ind += 1;
         }
-
     }
 }
 
-fn does_halt(mut machine: Vm) -> bool{
+fn does_halt(mut machine: &Vm) -> bool{
     let mut used = HashMap::new();
     loop {
         if let Some(i) = used.get(&machine.ip) {
